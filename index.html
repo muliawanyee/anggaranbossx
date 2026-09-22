@@ -3,844 +3,525 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BossX Token - Laporan Anggaran Biaya</title>
+<title>BossX Token - Laporan Keuangan Proyek</title>
 <style>
-    /* ============ RESET & BASE ============ */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-        --bg-dark: #0a0e1a;
-        --bg-card: rgba(20, 26, 46, 0.7);
-        --primary: #00d4ff;
-        --secondary: #7b61ff;
-        --accent: #ff3d8b;
-        --text-light: #e8ecf4;
-        --text-muted: #8892a6;
-        --border: rgba(123, 97, 255, 0.2);
-        --gradient-main: linear-gradient(135deg, #00d4ff 0%, #7b61ff 50%, #ff3d8b 100%);
+        --bg: #0b0f1a;
+        --card: rgba(17, 23, 42, 0.85);
+        --cyan: #00e5ff;
+        --purple: #8b5cf6;
+        --pink: #f43f7a;
+        --green: #22c55e;
+        --orange: #f59e0b;
+        --red: #ef4444;
+        --text: #e2e8f0;
+        --muted: #7a8599;
+        --border: rgba(139, 92, 246, 0.18);
     }
 
     body {
-        font-family: 'Segoe UI', Tahoma, sans-serif;
-        background: var(--bg-dark);
-        color: var(--text-light);
-        line-height: 1.6;
-        overflow-x: hidden;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
     }
 
-    /* Background animasi */
     body::before {
         content: '';
         position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: 
-            radial-gradient(circle at 20% 30%, rgba(123, 97, 255, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 50% 50%, rgba(255, 61, 139, 0.08) 0%, transparent 60%);
+        inset: 0;
+        background:
+            radial-gradient(ellipse at 15% 20%, rgba(0,229,255,0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 85% 80%, rgba(139,92,246,0.08) 0%, transparent 50%);
         z-index: -1;
     }
 
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
-    /* ============ NAVBAR ============ */
+    /* ===== NAV ===== */
     nav {
-        position: sticky;
-        top: 0;
-        background: rgba(10, 14, 26, 0.85);
-        backdrop-filter: blur(15px);
+        position: sticky; top: 0; z-index: 99;
+        background: rgba(11,15,26,0.88);
+        backdrop-filter: blur(14px);
         border-bottom: 1px solid var(--border);
-        padding: 18px 0;
-        z-index: 100;
+        padding: 16px 0;
+    }
+    nav .wrap { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.4rem; font-weight: 800; color: var(--cyan); letter-spacing: 1px; }
+    .logo span { color: var(--purple); }
+    .nav-tag {
+        font-size: 0.78rem; padding: 5px 14px;
+        background: rgba(239,68,68,0.12); border: 1px solid var(--red);
+        color: var(--red); border-radius: 50px; font-weight: 600;
     }
 
-    nav .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    /* ===== HERO ===== */
+    .hero { text-align: center; padding: 70px 20px 50px; }
+    .hero h1 { font-size: 2.6rem; font-weight: 800; margin-bottom: 10px; }
+    .hero h1 em {
+        font-style: normal;
+        background: linear-gradient(135deg, var(--cyan), var(--purple));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
+    .hero p { color: var(--muted); max-width: 600px; margin: 0 auto; font-size: 1.05rem; }
+    .hero-date { color: var(--muted); font-size: 0.85rem; margin-top: 8px; }
 
-    .logo {
-        font-size: 1.6rem;
-        font-weight: 800;
-        background: var(--gradient-main);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        letter-spacing: 1px;
+    /* ===== FUNDING STATUS (BIG) ===== */
+    .funding-status {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin: 40px 0 60px;
     }
-
-    .nav-links {
-        display: flex;
-        gap: 28px;
-        list-style: none;
-    }
-
-    .nav-links a {
-        color: var(--text-muted);
-        text-decoration: none;
-        font-size: 0.95rem;
-        transition: color 0.3s;
-    }
-
-    .nav-links a:hover {
-        color: var(--primary);
-    }
-
-    /* ============ HERO ============ */
-    .hero {
-        text-align: center;
-        padding: 100px 20px 80px;
-        position: relative;
-    }
-
-    .hero-badge {
-        display: inline-block;
-        padding: 6px 18px;
-        background: rgba(0, 212, 255, 0.1);
-        border: 1px solid var(--primary);
-        border-radius: 50px;
-        color: var(--primary);
-        font-size: 0.85rem;
-        margin-bottom: 25px;
-        letter-spacing: 1px;
-    }
-
-    .hero h1 {
-        font-size: 3.5rem;
-        font-weight: 800;
-        margin-bottom: 20px;
-        background: var(--gradient-main);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .hero p {
-        font-size: 1.15rem;
-        color: var(--text-muted);
-        max-width: 700px;
-        margin: 0 auto 35px;
-    }
-
-    .hero-stats {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        flex-wrap: wrap;
-        margin-top: 40px;
-    }
-
-    .stat-box {
-        text-align: center;
-    }
-
-    .stat-box .value {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: var(--primary);
-    }
-
-    .stat-box .label {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    /* ============ SECTION ============ */
-    section {
-        padding: 70px 0;
-    }
-
-    .section-title {
-        text-align: center;
-        margin-bottom: 50px;
-    }
-
-    .section-title h2 {
-        font-size: 2.3rem;
-        margin-bottom: 12px;
-        color: var(--text-light);
-    }
-
-    .section-title h2 span {
-        background: var(--gradient-main);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .section-title p {
-        color: var(--text-muted);
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    /* ============ EXECUTIVE SUMMARY ============ */
-    .summary-card {
-        background: var(--bg-card);
-        backdrop-filter: blur(10px);
+    .fs-box {
+        background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 40px;
+        border-radius: 18px;
+        padding: 30px 24px;
+        text-align: center;
         position: relative;
         overflow: hidden;
     }
-
-    .summary-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0;
+    .fs-box::before {
+        content: ''; position: absolute; top: 0; left: 0;
         width: 100%; height: 3px;
-        background: var(--gradient-main);
     }
+    .fs-box.total::before { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+    .fs-box.have::before { background: var(--green); }
+    .fs-box.need::before { background: var(--red); }
 
-    .summary-card h3 {
-        color: var(--primary);
-        margin-bottom: 15px;
-        font-size: 1.4rem;
-    }
+    .fs-label { font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+    .fs-value { font-size: 2rem; font-weight: 800; }
+    .fs-box.total .fs-value { color: var(--cyan); }
+    .fs-box.have .fs-value { color: var(--green); }
+    .fs-box.need .fs-value { color: var(--red); }
+    .fs-sub { font-size: 0.82rem; color: var(--muted); margin-top: 6px; }
 
-    .summary-card p {
-        color: var(--text-muted);
-        font-size: 1.05rem;
-    }
-
-    .summary-card strong {
-        color: var(--text-light);
-    }
-
-    /* ============ TABEL ANGGARAN ============ */
-    .table-wrapper {
-        background: var(--bg-card);
-        backdrop-filter: blur(10px);
+    /* ===== PROGRESS BAR BESAR ===== */
+    .progress-section {
+        background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 20px;
+        border-radius: 18px;
+        padding: 35px;
+        margin-bottom: 60px;
+    }
+    .progress-section h3 { margin-bottom: 20px; font-size: 1.2rem; }
+    .progress-section h3 span { color: var(--cyan); }
+    .big-bar-track {
+        width: 100%; height: 36px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 18px;
+        overflow: hidden;
+        position: relative;
+    }
+    .big-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--green), var(--cyan));
+        border-radius: 18px;
+        width: 65.7%;
+        display: flex; align-items: center; justify-content: flex-end;
+        padding-right: 14px;
+        font-weight: 700; font-size: 0.9rem; color: #000;
+        transition: width 2s ease;
+        box-shadow: 0 0 20px rgba(34,197,94,0.3);
+    }
+    .big-bar-gap {
+        position: absolute; top: 0; right: 0;
+        height: 100%; width: 34.3%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 0.85rem; color: var(--red);
+    }
+    .progress-legend {
+        display: flex; gap: 30px; margin-top: 14px; font-size: 0.88rem;
+    }
+    .progress-legend span { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot.green { background: var(--green); }
+    .dot.red { background: var(--red); }
+
+    /* ===== SECTION TITLE ===== */
+    .stitle { margin-bottom: 35px; }
+    .stitle h2 { font-size: 1.8rem; margin-bottom: 6px; }
+    .stitle h2 em {
+        font-style: normal;
+        background: linear-gradient(135deg, var(--cyan), var(--purple));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stitle p { color: var(--muted); }
+
+    /* ===== TABEL ===== */
+    .tbl-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
         overflow: hidden;
         overflow-x: auto;
+        margin-bottom: 60px;
     }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 700px;
-    }
-
-    thead {
-        background: linear-gradient(135deg, rgba(123, 97, 255, 0.2), rgba(0, 212, 255, 0.1));
-    }
-
+    table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    thead { background: rgba(139,92,246,0.1); }
     th {
-        padding: 18px 20px;
-        text-align: left;
-        color: var(--primary);
-        font-weight: 600;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        padding: 16px 18px; text-align: left;
+        color: var(--purple); font-size: 0.82rem;
+        text-transform: uppercase; letter-spacing: 1px;
         border-bottom: 1px solid var(--border);
     }
-
     td {
-        padding: 18px 20px;
-        border-bottom: 1px solid rgba(123, 97, 255, 0.08);
-        color: var(--text-light);
+        padding: 16px 18px;
+        border-bottom: 1px solid rgba(139,92,246,0.06);
         font-size: 0.95rem;
     }
-
-    tbody tr {
-        transition: background 0.3s;
+    tbody tr:hover { background: rgba(0,229,255,0.03); }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .total-row { background: rgba(0,229,255,0.06) !important; }
+    .total-row td { font-weight: 700; color: var(--cyan); border-top: 2px solid var(--border); }
+    .status-badge {
+        display: inline-block; padding: 3px 12px;
+        border-radius: 50px; font-size: 0.78rem; font-weight: 600;
     }
+    .badge-ok { background: rgba(34,197,94,0.15); color: var(--green); }
+    .badge-partial { background: rgba(245,158,11,0.15); color: var(--orange); }
+    .badge-need { background: rgba(239,68,68,0.15); color: var(--red); }
 
-    tbody tr:hover {
-        background: rgba(0, 212, 255, 0.05);
+    /* ===== GAP / KEKURANGAN ===== */
+    .gap-section {
+        background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(245,158,11,0.04));
+        border: 1px solid rgba(239,68,68,0.2);
+        border-radius: 18px;
+        padding: 35px;
+        margin-bottom: 60px;
     }
-
-    tbody tr:last-child td {
-        border-bottom: none;
+    .gap-section h3 { color: var(--red); margin-bottom: 8px; font-size: 1.3rem; }
+    .gap-section > p { color: var(--muted); margin-bottom: 25px; }
+    .gap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .gap-card {
+        background: rgba(11,15,26,0.6);
+        border: 1px solid rgba(239,68,68,0.12);
+        border-radius: 14px;
+        padding: 20px;
     }
+    .gap-card h5 { color: var(--orange); font-size: 0.95rem; margin-bottom: 6px; }
+    .gap-card .gap-amt { font-size: 1.4rem; font-weight: 800; color: var(--red); margin-bottom: 6px; }
+    .gap-card p { color: var(--muted); font-size: 0.85rem; }
 
-    .total-row {
-        background: linear-gradient(135deg, rgba(123, 97, 255, 0.15), rgba(255, 61, 139, 0.1)) !important;
-        font-weight: 700;
-        font-size: 1.05rem;
-    }
-
-    .total-row td {
-        color: var(--primary);
-    }
-
-    .category-number {
-        display: inline-block;
-        width: 28px;
-        height: 28px;
-        background: var(--gradient-main);
-        color: #fff;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 28px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-right: 10px;
-    }
-
-    /* ============ CARDS PENJELASAN ============ */
-    .cards-grid {
+    /* ===== RENCANA PENGGUNAAN ===== */
+    .use-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 25px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 60px;
     }
+    .use-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 26px;
+    }
+    .use-card h4 { color: var(--cyan); margin-bottom: 10px; }
+    .use-card p { color: var(--muted); font-size: 0.92rem; }
+    .use-card ul { list-style: none; margin-top: 10px; }
+    .use-card ul li {
+        color: var(--muted); font-size: 0.88rem;
+        padding: 3px 0 3px 18px; position: relative;
+    }
+    .use-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--purple); }
 
-    .info-card {
-        background: var(--bg-card);
-        backdrop-filter: blur(10px);
+    /* ===== CATATAN ===== */
+    .notes {
+        background: var(--card);
         border: 1px solid var(--border);
         border-radius: 18px;
         padding: 30px;
-        transition: transform 0.3s, border-color 0.3s;
-        position: relative;
-        overflow: hidden;
+        margin-bottom: 60px;
     }
+    .notes h3 { color: var(--orange); margin-bottom: 12px; }
+    .notes ol { padding-left: 20px; }
+    .notes ol li { color: var(--muted); font-size: 0.93rem; margin-bottom: 8px; }
+    .notes ol li strong { color: var(--text); }
 
-    .info-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--primary);
-    }
-
-    .info-card::after {
-        content: '';
-        position: absolute;
-        top: -50%; right: -50%;
-        width: 200px; height: 200px;
-        background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
-        border-radius: 50%;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-
-    .info-card:hover::after {
-        opacity: 1;
-    }
-
-    .card-icon {
-        font-size: 2.2rem;
-        margin-bottom: 15px;
-    }
-
-    .info-card h4 {
-        color: var(--primary);
-        margin-bottom: 8px;
-        font-size: 1.2rem;
-    }
-
-    .card-budget {
-        display: inline-block;
-        padding: 4px 12px;
-        background: rgba(123, 97, 255, 0.15);
-        border-radius: 20px;
-        color: var(--secondary);
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
-
-    .info-card p {
-        color: var(--text-muted);
-        font-size: 0.95rem;
-    }
-
-    .info-card ul {
-        list-style: none;
-        margin-top: 12px;
-    }
-
-    .info-card ul li {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        padding: 4px 0;
-        padding-left: 20px;
-        position: relative;
-    }
-
-    .info-card ul li::before {
-        content: '▸';
-        position: absolute;
-        left: 0;
-        color: var(--primary);
-    }
-
-    /* ============ TOKENOMICS ============ */
-    .tokenomics-container {
-        background: var(--bg-card);
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 40px;
-    }
-
-    .token-bar {
-        margin-bottom: 22px;
-    }
-
-    .token-bar-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 8px;
-    }
-
-    .token-bar-label {
-        color: var(--text-light);
-        font-weight: 500;
-    }
-
-    .token-bar-value {
-        color: var(--primary);
-        font-weight: 700;
-    }
-
-    .token-bar-track {
-        width: 100%;
-        height: 12px;
-        background: rgba(123, 97, 255, 0.1);
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .token-bar-fill {
-        height: 100%;
-        background: var(--gradient-main);
-        border-radius: 10px;
-        transition: width 1.5s ease-out;
-        box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
-    }
-
-    /* ============ RISK SECTION ============ */
-    .risk-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-    }
-
-    .risk-item {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-left: 3px solid var(--accent);
-        border-radius: 12px;
-        padding: 22px;
-    }
-
-    .risk-item h5 {
-        color: var(--accent);
-        margin-bottom: 8px;
-        font-size: 1.05rem;
-    }
-
-    .risk-item p {
-        color: var(--text-muted);
-        font-size: 0.92rem;
-    }
-
-    /* ============ FOOTER ============ */
+    /* ===== FOOTER ===== */
     footer {
-        background: rgba(10, 14, 26, 0.9);
         border-top: 1px solid var(--border);
-        padding: 50px 0 30px;
-        margin-top: 50px;
+        padding: 40px 0 25px;
     }
-
-    .signature-block {
+    .sig-row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 40px;
-        margin-bottom: 40px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
     }
-
-    .signature {
-        text-align: center;
-    }
-
-    .signature-line {
-        width: 200px;
-        height: 1px;
-        background: var(--border);
-        margin: 40px auto 15px;
-    }
-
-    .signature h5 {
-        color: var(--text-light);
-        margin-bottom: 5px;
-    }
-
-    .signature p {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-    }
-
-    .footer-bottom {
-        text-align: center;
-        padding-top: 25px;
+    .sig { text-align: center; }
+    .sig-line { width: 180px; height: 1px; background: var(--border); margin: 50px auto 12px; }
+    .sig h5 { color: var(--text); }
+    .sig p { color: var(--muted); font-size: 0.85rem; }
+    .foot-bottom {
+        text-align: center; padding-top: 20px;
         border-top: 1px solid var(--border);
-        color: var(--text-muted);
-        font-size: 0.85rem;
+        color: var(--muted); font-size: 0.82rem;
     }
+    .foot-bottom b { color: var(--cyan); }
 
-    .footer-bottom span {
-        background: var(--gradient-main);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-weight: 700;
-    }
-
-    /* ============ RESPONSIVE ============ */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-        .hero h1 { font-size: 2.2rem; }
-        .section-title h2 { font-size: 1.7rem; }
-        .nav-links { display: none; }
-        .hero-stats { gap: 25px; }
-        .stat-box .value { font-size: 1.6rem; }
-        th, td { padding: 12px 10px; font-size: 0.85rem; }
+        .funding-status { grid-template-columns: 1fr; }
+        .hero h1 { font-size: 1.8rem; }
+        .fs-value { font-size: 1.5rem; }
+        .big-bar-fill { font-size: 0.75rem; }
     }
 </style>
 </head>
 <body>
 
-<!-- ============ NAVBAR ============ -->
+<!-- NAV -->
 <nav>
-    <div class="container">
-        <div class="logo">⚡ BOSSX TOKEN</div>
-        <ul class="nav-links">
-            <li><a href="#summary">Ringkasan</a></li>
-            <li><a href="#budget">Anggaran</a></li>
-            <li><a href="#details">Detail</a></li>
-            <li><a href="#tokenomics">Tokenomics</a></li>
-            <li><a href="#risk">Risiko</a></li>
-        </ul>
+    <div class="wrap">
+        <div class="logo">BOSS<span>X</span> TOKEN</div>
+        <div class="nav-tag">⚠ KEKURANGAN DANA: ~Rp 200 Jt</div>
     </div>
 </nav>
 
-<!-- ============ HERO ============ -->
+<!-- HERO -->
 <section class="hero">
-    <div class="container">
-        <span class="hero-badge">📊 LAPORAN ANGGARAN 2026</span>
-        <h1>BossX Token<br>Cost Budget Report</h1>
-        <p>Dokumen resmi perencanaan anggaran pembangunan startup cryptocurrency BossX Token berbasis Web3 untuk fase pra-peluncuran hingga initial launch.</p>
-        
-        <div class="hero-stats">
-            <div class="stat-box">
-                <div class="value">$165K</div>
-                <div class="label">Estimasi Bawah</div>
+    <h1>Laporan Keuangan Proyek<br><em>BossX Token</em></h1>
+    <p>Dokumen internal status pendanaan startup cryptocurrency BossX — total kebutuhan modal, dana tersedia, dan estimasi kekurangan yang harus dipenuhi.</p>
+    <div class="hero-date">Disusun: 22 September 2026 &nbsp;|&nbsp; Status: Aktif Mencari Pendanaan</div>
+</section>
+
+<div class="wrap">
+
+    <!-- 3 BOX UTAMA -->
+    <div class="funding-status">
+        <div class="fs-box total">
+            <div class="fs-label">Total Modal Dibutuhkan</div>
+            <div class="fs-value">Rp 583.000.000</div>
+            <div class="fs-sub">Lima ratus delapan puluh tiga juta rupiah</div>
+        </div>
+        <div class="fs-box have">
+            <div class="fs-label">Dana Tersedia Saat Ini</div>
+            <div class="fs-value">~Rp 383.000.000</div>
+            <div class="fs-sub">± 65,7% dari total kebutuhan</div>
+        </div>
+        <div class="fs-box need">
+            <div class="fs-label">Estimasi Kekurangan</div>
+            <div class="fs-value">~Rp 200.000.000</div>
+            <div class="fs-sub">± 34,3% — perlu pendanaan tambahan</div>
+        </div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-section">
+        <h3>📊 Progress Pendanaan <span>BossX Token</span></h3>
+        <div class="big-bar-track">
+            <div class="big-bar-fill">65,7%</div>
+            <div class="big-bar-gap">-34,3%</div>
+        </div>
+        <div class="progress-legend">
+            <span><i class="dot green"></i> Dana Tersedia (~Rp 383 Jt)</span>
+            <span><i class="dot red"></i> Kekurangan (~Rp 200 Jt)</span>
+        </div>
+    </div>
+
+    <!-- TABEL RINCIAN ANGGARAN -->
+    <div class="stitle">
+        <h2>Rincian Anggaran <em>Rp 583 Juta</em></h2>
+        <p>Breakdown penggunaan modal per pos pengeluaran beserta status pendanaan</p>
+    </div>
+
+    <div class="tbl-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Pos Pengeluaran</th>
+                    <th class="num">Anggaran (Rp)</th>
+                    <th class="num">Tersedia (Rp)</th>
+                    <th class="num">Kurang (Rp)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Pengembangan Teknologi</strong><br><small style="color:var(--muted)">Smart Contract, Website Web3, dApp, UI/UX</small></td>
+                    <td class="num">150.000.000</td>
+                    <td class="num">100.000.000</td>
+                    <td class="num" style="color:var(--red)">50.000.000</td>
+                    <td><span class="status-badge badge-partial">Sebagian</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Legalitas & Perizinan</strong><br><small style="color:var(--muted)">PT, Legal Opinion, Kepatuhan Bappebti</small></td>
+                    <td class="num">50.000.000</td>
+                    <td class="num">50.000.000</td>
+                    <td class="num" style="color:var(--green)">0</td>
+                    <td><span class="status-badge badge-ok">Terpenuhi</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Audit Keamanan</strong><br><small style="color:var(--muted)">Audit Smart Contract, Pentest Website</small></td>
+                    <td class="num">40.000.000</td>
+                    <td class="num">25.000.000</td>
+                    <td class="num" style="color:var(--red)">15.000.000</td>
+                    <td><span class="status-badge badge-partial">Sebagian</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>Pemasaran & Komunitas</strong><br><small style="color:var(--muted)">KOL, Social Media, Airdrop, PR</small></td>
+                    <td class="num">80.000.000</td>
+                    <td class="num">45.000.000</td>
+                    <td class="num" style="color:var(--red)">35.000.000</td>
+                    <td><span class="status-badge badge-partial">Sebagian</span></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><strong>Likuiditas & Listing</strong><br><small style="color:var(--muted)">DEX Liquidity Pool, CEX Listing, Market Maker</small></td>
+                    <td class="num">120.000.000</td>
+                    <td class="num">50.000.000</td>
+                    <td class="num" style="color:var(--red)">70.000.000</td>
+                    <td><span class="status-badge badge-need">Butuh Dana</span></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><strong>Operasional & Tim</strong><br><small style="color:var(--muted)">Gaji, Server, Tools (6 bulan)</small></td>
+                    <td class="num">93.000.000</td>
+                    <td class="num">73.000.000</td>
+                    <td class="num" style="color:var(--red)">20.000.000</td>
+                    <td><span class="status-badge badge-partial">Sebagian</span></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><strong>Dana Cadangan</strong><br><small style="color:var(--muted)">Buffer tak terduga, fluktuasi gas fee</small></td>
+                    <td class="num">50.000.000</td>
+                    <td class="num">40.000.000</td>
+                    <td class="num" style="color:var(--red)">10.000.000</td>
+                    <td><span class="status-badge badge-partial">Sebagian</span></td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="2"><strong>TOTAL</strong></td>
+                    <td class="num"><strong>583.000.000</strong></td>
+                    <td class="num" style="color:var(--green)"><strong>383.000.000</strong></td>
+                    <td class="num" style="color:var(--red)"><strong>200.000.000</strong></td>
+                    <td><span class="status-badge badge-need">-34,3%</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- KEKURANGAN DANA -->
+    <div class="gap-section">
+        <h3>🔴 Detail Kekurangan Dana: ~Rp 200.000.000</h3>
+        <p>Berikut adalah pos-pos yang masih membutuhkan suntikan dana agar proyek BossX Token dapat berjalan sesuai rencana:</p>
+        <div class="gap-grid">
+            <div class="gap-card">
+                <h5>1. Likuiditas & Listing</h5>
+                <div class="gap-amt">-Rp 70 Jt</div>
+                <p>Kekurangan terbesar. Dana ini krusial untuk menyediakan Liquidity Pool di DEX agar token BOSSX bisa diperdagangkan saat launch.</p>
             </div>
-            <div class="stat-box">
-                <div class="value">$315K</div>
-                <div class="label">Estimasi Atas</div>
+            <div class="gap-card">
+                <h5>2. Pengembangan Teknologi</h5>
+                <div class="gap-amt">-Rp 50 Jt</div>
+                <p>Untuk menyelesaikan fitur dApp, integrasi wallet, dan testing sebelum deployment ke mainnet.</p>
             </div>
-            <div class="stat-box">
-                <div class="value">6 Bulan</div>
-                <div class="label">Timeline Proyek</div>
+            <div class="gap-card">
+                <h5>3. Pemasaran & Komunitas</h5>
+                <div class="gap-amt">-Rp 35 Jt</div>
+                <p>Kampanye KOL, airdrop, dan building komunitas yang agresif menjelang peluncuran token.</p>
             </div>
-            <div class="stat-box">
-                <div class="value">7</div>
-                <div class="label">Kategori Utama</div>
+            <div class="gap-card">
+                <h5>4. Operasional & Tim</h5>
+                <div class="gap-amt">-Rp 20 Jt</div>
+                <p>Menutup gaji tim inti dan biaya server untuk 2-3 bulan tambahan runway.</p>
+            </div>
+            <div class="gap-card">
+                <h5>5. Audit Keamanan</h5>
+                <div class="gap-amt">-Rp 15 Jt</div>
+                <p>Menyelesaikan audit smart contract penuh oleh firma auditor sebelum token diluncurkan.</p>
+            </div>
+            <div class="gap-card">
+                <h5>6. Dana Cadangan</h5>
+                <div class="gap-amt">-Rp 10 Jt</div>
+                <p>Buffer tambahan untuk biaya tak terduga seperti lonjakan gas fee atau revisi mendesak.</p>
             </div>
         </div>
     </div>
-</section>
 
-<!-- ============ EXECUTIVE SUMMARY ============ -->
-<section id="summary">
-    <div class="container">
-        <div class="section-title">
-            <h2>Ringkasan <span>Eksekutif</span></h2>
-            <p>Gambaran umum proyek dan total kebutuhan anggaran</p>
+    <!-- RENCANA PENGGUNAAN DANA KEKURANGAN -->
+    <div class="stitle">
+        <h2>Rencana Penggunaan <em>Dana Rp 200 Juta</em></h2>
+        <p>Jika pendanaan tambahan berhasil diperoleh, dana akan dialokasikan sebagai berikut</p>
+    </div>
+
+    <div class="use-grid">
+        <div class="use-card">
+            <h4>🚀 Fase 1: Bulan 1-2 (Rp 85 Jt)</h4>
+            <p>Prioritas penyelesaian produk & keamanan:</p>
+            <ul>
+                <li>Finalisasi Smart Contract & dApp (Rp 50 Jt)</li>
+                <li>Audit keamanan penuh (Rp 15 Jt)</li>
+                <li>Operasional tim developer (Rp 20 Jt)</li>
+            </ul>
         </div>
-        <div class="summary-card">
-            <h3>📌 Tentang Proyek</h3>
-            <p>
-                Proyek <strong>BossX Token</strong> bertujuan untuk membangun ekosistem cryptocurrency yang didukung oleh website/Web3 dApp sebagai pusat interaksi pengguna. Total estimasi anggaran yang dibutuhkan untuk fase awal (6 bulan pertama) adalah <strong>$165,000 - $315,000 USD</strong>. Anggaran ini mencakup pengembangan teknologi, audit keamanan, legalitas, pemasaran komunitas, dan penyediaan likuiditas awal.
-            </p>
+        <div class="use-card">
+            <h4>📢 Fase 2: Bulan 3-4 (Rp 55 Jt)</h4>
+            <p>Marketing agresif menjelang launch:</p>
+            <ul>
+                <li>Kampanye KOL & influencer (Rp 25 Jt)</li>
+                <li>Airdrop & community building (Rp 10 Jt)</li>
+                <li>Operasional & server (Rp 10 Jt)</li>
+                <li>Dana cadangan (Rp 10 Jt)</li>
+            </ul>
+        </div>
+        <div class="use-card">
+            <h4>💎 Fase 3: Bulan 5-6 (Rp 60 Jt)</h4>
+            <p>Peluncuran token & listing:</p>
+            <ul>
+                <li>Liquidity Pool DEX (Rp 50 Jt)</li>
+                <li>Biaya listing CEX kecil (Rp 10 Jt)</li>
+            </ul>
         </div>
     </div>
-</section>
 
-<!-- ============ TABEL ANGGARAN ============ -->
-<section id="budget">
-    <div class="container">
-        <div class="section-title">
-            <h2>Rincian <span>Anggaran Biaya</span></h2>
-            <p>Breakdown alokasi dana per kategori pengeluaran</p>
-        </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Kategori</th>
-                        <th>Sub-Kategori</th>
-                        <th>Bawah (USD)</th>
-                        <th>Atas (USD)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="category-number">1</span></td>
-                        <td><strong>Legalitas & Kepatuhan</strong></td>
-                        <td>Pendirian Entitas, Legal Opinion, KYC/AML</td>
-                        <td>$10,000</td>
-                        <td>$25,000</td>
-                    </tr>
-                    <tr>
-                        <td><span class="category-number">2</span></td>
-                        <td><strong>Teknologi & Pengembangan</strong></td>
-                        <td>Smart Contract, Web3 Website, UI/UX</td>
-                        <td>$25,000</td>
-                        <td>$45,000</td>
-                    </tr>
-                    <tr>
-                        <td><span class="category-number">3</span></td>
-                        <td><strong>Keamanan (Security)</strong></td>
-                        <td>Audit Smart Contract, Bug Bounty, Pentest</td>
-                        <td>$15,000</td>
-                        <td>$30,000</td>
-                    </tr>
-                    <tr>
-                        <td><span class="category-number">4</span></td>
-                        <td><strong>Pemasaran & Komunitas</strong></td>
-                        <td>Social Media, KOL, PR, Airdrop</td>
-                        <td>$30,000</td>
-                        <td>$60,000</td>
-                    </tr>
-                    <tr>
-                        <td><span class="category-number">5</span></td>
-                        <td><strong>Listing & Likuiditas</strong></td>
-                        <td>DEX Liquidity, CEX Listing, Market Maker</td>
-                        <td>$40,000</td>
-                        <td>$80,000</td>
-                    </tr>
-                    <tr>
-                        <td><span class="category-number">6</span></td>
-                        <td><strong>Operasional & Tim</strong></td>
-                        <td>Gaji Tim, Server, Tools & Software</td>
-                        <td>$25,000</td>
-                        <td>$45,000</td>
-                    </tr>
-                    <tr>
-                        <td><span class="category-number">7</span></td>
-                        <td><strong>Dana Cadangan</strong></td>
-                        <td>Contingency 15% untuk biaya tak terduga</td>
-                        <td>$20,000</td>
-                        <td>$30,000</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td colspan="3"><strong>TOTAL ESTIMASI</strong></td>
-                        <td><strong>$165,000</strong></td>
-                        <td><strong>$315,000</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <!-- CATATAN PENTING -->
+    <div class="notes">
+        <h3>📝 Catatan Penting</h3>
+        <ol>
+            <li><strong>Angka bersifat estimasi</strong> — angka Rp 383 juta (dana tersedia) dan Rp 200 juta (kekurangan) dapat berubah sesuai kondisi aktual kas dan komitmen investor yang sudah masuk.</li>
+            <li><strong>Dana likuiditas tidak hangus</strong> — Rp 120 juta untuk likuiditas akan dikunci dalam Liquidity Pool dan tetap menjadi aset proyek, bukan biaya yang hilang.</li>
+            <li><strong>Prioritas utama</strong> — jika dana Rp 200 juta tidak bisa dipenuhi sekaligus, prioritas pertama adalah Teknologi + Audit (Rp 65 Jt) agar produk bisa launch minimal di DEX.</li>
+            <li><strong>Opsi pendanaan</strong> — kekurangan bisa ditutup melalui: investor angel, private sale token BOSSX, grant blockchain, atau bootstrapping bertahap.</li>
+            <li><strong>Transparansi</strong> — seluruh penggunaan dana akan dicatat on-chain dan dilaporkan berkala kepada investor/kontributor.</li>
+        </ol>
     </div>
-</section>
 
-<!-- ============ DETAIL PER KATEGORI ============ -->
-<section id="details">
-    <div class="container">
-        <div class="section-title">
-            <h2>Penjelasan <span>Per Kategori</span></h2>
-            <p>Detail penggunaan dana pada setiap pos anggaran</p>
-        </div>
-        <div class="cards-grid">
-            <div class="info-card">
-                <div class="card-icon">⚖️</div>
-                <h4>Legalitas & Kepatuhan</h4>
-                <span class="card-budget">$10K - $25K</span>
-                <p>Pendirian entitas hukum (Foundation/PT), Token Sale Agreement, Privacy Policy, dan kepatuhan regulasi crypto 2026.</p>
-            </div>
+</div>
 
-            <div class="info-card">
-                <div class="card-icon">💻</div>
-                <h4>Teknologi & Website</h4>
-                <span class="card-budget">$25K - $45K</span>
-                <p>Pembangunan Web3 dApp dengan fitur:</p>
-                <ul>
-                    <li>Dashboard user (saldo, staking, reward)</li>
-                    <li>Integrasi MetaMask & WalletConnect</li>
-                    <li>Sistem swap token langsung</li>
-                    <li>UI/UX premium & responsif</li>
-                </ul>
-            </div>
-
-            <div class="info-card">
-                <div class="card-icon">🛡️</div>
-                <h4>Keamanan / Audit</h4>
-                <span class="card-budget">$15K - $30K</span>
-                <p>Audit Smart Contract oleh firma pihak ketiga (CertiK, Hacken, SolidProof) untuk mencegah eksploitasi dan membangun kepercayaan.</p>
-            </div>
-
-            <div class="info-card">
-                <div class="card-icon">📢</div>
-                <h4>Pemasaran & Komunitas</h4>
-                <span class="card-budget">$30K - $60K</span>
-                <p>Membangun komunitas Telegram & Discord, KOL di Twitter/X, kampanye Airdrop, dan media release global.</p>
-            </div>
-
-            <div class="info-card">
-                <div class="card-icon">💎</div>
-                <h4>Listing & Likuiditas</h4>
-                <span class="card-budget">$40K - $80K</span>
-                <p>Penyediaan Liquidity Pool di DEX (Uniswap/PancakeSwap), listing CEX Tier 2/3, dan jasa Market Maker awal.</p>
-            </div>
-
-            <div class="info-card">
-                <div class="card-icon">👥</div>
-                <h4>Operasional & Tim</h4>
-                <span class="card-budget">$25K - $45K</span>
-                <p>Gaji Developer, Community Manager, Marketer selama 3-6 bulan, serta biaya infrastruktur server (AWS, Node RPC).</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============ TOKENOMICS ============ -->
-<section id="tokenomics">
-    <div class="container">
-        <div class="section-title">
-            <h2>Alokasi <span>Tokenomics</span></h2>
-            <p>Distribusi suplai total 1.000.000.000 BOSSX</p>
-        </div>
-        <div class="tokenomics-container">
-            <div class="token-bar">
-                <div class="token-bar-header">
-                    <span class="token-bar-label">Likuiditas & Ekosistem</span>
-                    <span class="token-bar-value">30%</span>
-                </div>
-                <div class="token-bar-track"><div class="token-bar-fill" style="width: 30%"></div></div>
-            </div>
-            <div class="token-bar">
-                <div class="token-bar-header">
-                    <span class="token-bar-label">Pemasaran & Kemitraan</span>
-                    <span class="token-bar-value">20%</span>
-                </div>
-                <div class="token-bar-track"><div class="token-bar-fill" style="width: 20%"></div></div>
-            </div>
-            <div class="token-bar">
-                <div class="token-bar-header">
-                    <span class="token-bar-label">Tim & Penasihat</span>
-                    <span class="token-bar-value">15%</span>
-                </div>
-                <div class="token-bar-track"><div class="token-bar-fill" style="width: 15%"></div></div>
-            </div>
-            <div class="token-bar">
-                <div class="token-bar-header">
-                    <span class="token-bar-label">Pengembangan & R&D</span>
-                    <span class="token-bar-value">15%</span>
-                </div>
-                <div class="token-bar-track"><div class="token-bar-fill" style="width: 15%"></div></div>
-            </div>
-            <div class="token-bar">
-                <div class="token-bar-header">
-                    <span class="token-bar-label">Airdrop & Komunitas</span>
-                    <span class="token-bar-value">10%</span>
-                </div>
-                <div class="token-bar-track"><div class="token-bar-fill" style="width: 10%"></div></div>
-            </div>
-            <div class="token-bar">
-                <div class="token-bar-header">
-                    <span class="token-bar-label">Cadangan (Reserve)</span>
-                    <span class="token-bar-value">10%</span>
-                </div>
-                <div class="token-bar-track"><div class="token-bar-fill" style="width: 10%"></div></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============ MITIGASI RISIKO ============ -->
-<section id="risk">
-    <div class="container">
-        <div class="section-title">
-            <h2>Mitigasi <span>Risiko</span></h2>
-            <p>Strategi pengelolaan risiko proyek</p>
-        </div>
-        <div class="risk-list">
-            <div class="risk-item">
-                <h5>⚠️ Volatilitas Pasar</h5>
-                <p>Dana cadangan (contingency) disiapkan untuk mengantisipasi lonjakan gas fee blockchain saat jaringan padat.</p>
-            </div>
-            <div class="risk-item">
-                <h5>⚠️ Regulasi</h5>
-                <p>Tim legal akan terus memperbarui kepatuhan terhadap regulasi crypto (MiCA Eropa, Bappebti Indonesia, dll).</p>
-            </div>
-            <div class="risk-item">
-                <h5>⚠️ Keamanan Website</h5>
-                <p>Website dilindungi dari DDoS & peretasan menggunakan Cloudflare Enterprise dan best practice keamanan web.</p>
-            </div>
-            <div class="risk-item">
-                <h5>⚠️ Transparansi</h5>
-                <p>Dana likuiditas & pemasaran digunakan secara transparan untuk menghindari stigma rug pull dari komunitas.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============ FOOTER / SIGNATURE ============ -->
+<!-- FOOTER -->
 <footer>
-    <div class="container">
-        <div class="signature-block">
-            <div class="signature">
-                <div class="signature-line"></div>
+    <div class="wrap">
+        <div class="sig-row">
+            <div class="sig">
+                <div class="sig-line"></div>
                 <h5>Founder / CEO</h5>
                 <p>BossX Token</p>
             </div>
-            <div class="signature">
-                <div class="signature-line"></div>
-                <h5>Chief Financial Officer</h5>
+            <div class="sig">
+                <div class="sig-line"></div>
+                <h5>Finance / Bendahara</h5>
                 <p>BossX Token</p>
             </div>
-            <div class="signature">
-                <div class="signature-line"></div>
-                <h5>Tanggal Penyusunan</h5>
+            <div class="sig">
+                <div class="sig-line"></div>
+                <h5>Tanggal</h5>
                 <p>22 September 2026</p>
             </div>
         </div>
-        <div class="footer-bottom">
-            © 2026 <span>BOSSX TOKEN</span> — Confidential Budget Report. All rights reserved.
+        <div class="foot-bottom">
+            © 2026 <b>BOSSX TOKEN</b> — Dokumen Internal & Rahasia. Total Kebutuhan: Rp 583.000.000 | Kekurangan: ~Rp 200.000.000
         </div>
     </div>
 </footer>
-
-<script>
-    // Smooth scroll untuk navigasi
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    });
-
-    // Animasi tokenomics bar saat di-scroll
-    const bars = document.querySelectorAll('.token-bar-fill');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const width = entry.target.style.width;
-                entry.target.style.width = '0';
-                setTimeout(() => { entry.target.style.width = width; }, 100);
-            }
-        });
-    }, { threshold: 0.3 });
-    bars.forEach(bar => observer.observe(bar));
-</script>
 
 </body>
 </html>

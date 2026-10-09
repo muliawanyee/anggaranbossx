@@ -1,527 +1,209 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BossX Token - Laporan Keuangan Proyek</title>
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-        --bg: #0b0f1a;
-        --card: rgba(17, 23, 42, 0.85);
-        --cyan: #00e5ff;
-        --purple: #8b5cf6;
-        --pink: #f43f7a;
-        --green: #22c55e;
-        --orange: #f59e0b;
-        --red: #ef4444;
-        --text: #e2e8f0;
-        --muted: #7a8599;
-        --border: rgba(139, 92, 246, 0.18);
-    }
-
-    body {
-        font-family: 'Segoe UI', system-ui, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        line-height: 1.7;
-    }
-
-    body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background:
-            radial-gradient(ellipse at 15% 20%, rgba(0,229,255,0.08) 0%, transparent 50%),
-            radial-gradient(ellipse at 85% 80%, rgba(139,92,246,0.08) 0%, transparent 50%);
-        z-index: -1;
-    }
-
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-
-    /* ===== NAV ===== */
-    nav {
-        position: sticky; top: 0; z-index: 99;
-        background: rgba(11,15,26,0.88);
-        backdrop-filter: blur(14px);
-        border-bottom: 1px solid var(--border);
-        padding: 16px 0;
-    }
-    nav .wrap { display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 1.4rem; font-weight: 800; color: var(--cyan); letter-spacing: 1px; }
-    .logo span { color: var(--purple); }
-    .nav-tag {
-        font-size: 0.78rem; padding: 5px 14px;
-        background: rgba(239,68,68,0.12); border: 1px solid var(--red);
-        color: var(--red); border-radius: 50px; font-weight: 600;
-    }
-
-    /* ===== HERO ===== */
-    .hero { text-align: center; padding: 70px 20px 50px; }
-    .hero h1 { font-size: 2.6rem; font-weight: 800; margin-bottom: 10px; }
-    .hero h1 em {
-        font-style: normal;
-        background: linear-gradient(135deg, var(--cyan), var(--purple));
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .hero p { color: var(--muted); max-width: 600px; margin: 0 auto; font-size: 1.05rem; }
-    .hero-date { color: var(--muted); font-size: 0.85rem; margin-top: 8px; }
-
-    /* ===== FUNDING STATUS (BIG) ===== */
-    .funding-status {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        margin: 40px 0 60px;
-    }
-    .fs-box {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 30px 24px;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-    .fs-box::before {
-        content: ''; position: absolute; top: 0; left: 0;
-        width: 100%; height: 3px;
-    }
-    .fs-box.total::before { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
-    .fs-box.have::before { background: var(--green); }
-    .fs-box.need::before { background: var(--red); }
-
-    .fs-label { font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
-    .fs-value { font-size: 2rem; font-weight: 800; }
-    .fs-box.total .fs-value { color: var(--cyan); }
-    .fs-box.have .fs-value { color: var(--green); }
-    .fs-box.need .fs-value { color: var(--red); }
-    .fs-sub { font-size: 0.82rem; color: var(--muted); margin-top: 6px; }
-
-    /* ===== PROGRESS BAR BESAR ===== */
-    .progress-section {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 35px;
-        margin-bottom: 60px;
-    }
-    .progress-section h3 { margin-bottom: 20px; font-size: 1.2rem; }
-    .progress-section h3 span { color: var(--cyan); }
-    .big-bar-track {
-        width: 100%; height: 36px;
-        background: rgba(255,255,255,0.05);
-        border-radius: 18px;
-        overflow: hidden;
-        position: relative;
-    }
-    .big-bar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--green), var(--cyan));
-        border-radius: 18px;
-        width: 65.7%;
-        display: flex; align-items: center; justify-content: flex-end;
-        padding-right: 14px;
-        font-weight: 700; font-size: 0.9rem; color: #000;
-        transition: width 2s ease;
-        box-shadow: 0 0 20px rgba(34,197,94,0.3);
-    }
-    .big-bar-gap {
-        position: absolute; top: 0; right: 0;
-        height: 100%; width: 34.3%;
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 0.85rem; color: var(--red);
-    }
-    .progress-legend {
-        display: flex; gap: 30px; margin-top: 14px; font-size: 0.88rem;
-    }
-    .progress-legend span { display: flex; align-items: center; gap: 8px; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-    .dot.green { background: var(--green); }
-    .dot.red { background: var(--red); }
-
-    /* ===== SECTION TITLE ===== */
-    .stitle { margin-bottom: 35px; }
-    .stitle h2 { font-size: 1.8rem; margin-bottom: 6px; }
-    .stitle h2 em {
-        font-style: normal;
-        background: linear-gradient(135deg, var(--cyan), var(--purple));
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .stitle p { color: var(--muted); }
-
-    /* ===== TABEL ===== */
-    .tbl-wrap {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        overflow: hidden;
-        overflow-x: auto;
-        margin-bottom: 60px;
-    }
-    table { width: 100%; border-collapse: collapse; min-width: 650px; }
-    thead { background: rgba(139,92,246,0.1); }
-    th {
-        padding: 16px 18px; text-align: left;
-        color: var(--purple); font-size: 0.82rem;
-        text-transform: uppercase; letter-spacing: 1px;
-        border-bottom: 1px solid var(--border);
-    }
-    td {
-        padding: 16px 18px;
-        border-bottom: 1px solid rgba(139,92,246,0.06);
-        font-size: 0.95rem;
-    }
-    tbody tr:hover { background: rgba(0,229,255,0.03); }
-    .num { text-align: right; font-variant-numeric: tabular-nums; }
-    .total-row { background: rgba(0,229,255,0.06) !important; }
-    .total-row td { font-weight: 700; color: var(--cyan); border-top: 2px solid var(--border); }
-    .status-badge {
-        display: inline-block; padding: 3px 12px;
-        border-radius: 50px; font-size: 0.78rem; font-weight: 600;
-    }
-    .badge-ok { background: rgba(34,197,94,0.15); color: var(--green); }
-    .badge-partial { background: rgba(245,158,11,0.15); color: var(--orange); }
-    .badge-need { background: rgba(239,68,68,0.15); color: var(--red); }
-
-    /* ===== GAP / KEKURANGAN ===== */
-    .gap-section {
-        background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(245,158,11,0.04));
-        border: 1px solid rgba(239,68,68,0.2);
-        border-radius: 18px;
-        padding: 35px;
-        margin-bottom: 60px;
-    }
-    .gap-section h3 { color: var(--red); margin-bottom: 8px; font-size: 1.3rem; }
-    .gap-section > p { color: var(--muted); margin-bottom: 25px; }
-    .gap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .gap-card {
-        background: rgba(11,15,26,0.6);
-        border: 1px solid rgba(239,68,68,0.12);
-        border-radius: 14px;
-        padding: 20px;
-    }
-    .gap-card h5 { color: var(--orange); font-size: 0.95rem; margin-bottom: 6px; }
-    .gap-card .gap-amt { font-size: 1.4rem; font-weight: 800; color: var(--red); margin-bottom: 6px; }
-    .gap-card p { color: var(--muted); font-size: 0.85rem; }
-
-    /* ===== RENCANA PENGGUNAAN ===== */
-    .use-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin-bottom: 60px;
-    }
-    .use-card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 26px;
-    }
-    .use-card h4 { color: var(--cyan); margin-bottom: 10px; }
-    .use-card p { color: var(--muted); font-size: 0.92rem; }
-    .use-card ul { list-style: none; margin-top: 10px; }
-    .use-card ul li {
-        color: var(--muted); font-size: 0.88rem;
-        padding: 3px 0 3px 18px; position: relative;
-    }
-    .use-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--purple); }
-
-    /* ===== CATATAN ===== */
-    .notes {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 30px;
-        margin-bottom: 60px;
-    }
-    .notes h3 { color: var(--orange); margin-bottom: 12px; }
-    .notes ol { padding-left: 20px; }
-    .notes ol li { color: var(--muted); font-size: 0.93rem; margin-bottom: 8px; }
-    .notes ol li strong { color: var(--text); }
-
-    /* ===== FOOTER ===== */
-    footer {
-        border-top: 1px solid var(--border);
-        padding: 40px 0 25px;
-    }
-    .sig-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 30px;
-        margin-bottom: 30px;
-    }
-    .sig { text-align: center; }
-    .sig-line { width: 180px; height: 1px; background: var(--border); margin: 50px auto 12px; }
-    .sig h5 { color: var(--text); }
-    .sig p { color: var(--muted); font-size: 0.85rem; }
-    .foot-bottom {
-        text-align: center; padding-top: 20px;
-        border-top: 1px solid var(--border);
-        color: var(--muted); font-size: 0.82rem;
-    }
-    .foot-bottom b { color: var(--cyan); }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-        .funding-status { grid-template-columns: 1fr; }
-        .hero h1 { font-size: 1.8rem; }
-        .fs-value { font-size: 1.5rem; }
-        .big-bar-fill { font-size: 0.75rem; }
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Modal Kerja - BossX & BossXp</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #f3f4f6; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-<!-- NAV -->
-<nav>
-    <div class="wrap">
-        <div class="logo">BOSS<span>X</span> TOKEN</div>
-        <div class="nav-tag">⚠ KEKURANGAN DANA: ~Rp 200 Jt</div>
-    </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-    <h1>Laporan Keuangan Proyek<br><em>BossX Token</em></h1>
-    <p>Dokumen internal status pendanaan startup cryptocurrency BossX — total kebutuhan modal, dana tersedia, dan estimasi kekurangan yang harus dipenuhi.</p>
-    <div class="hero-date">Disusun: 22 September 2026 &nbsp;|&nbsp; Status: Aktif Mencari Pendanaan</div>
-</section>
-
-<div class="wrap">
-
-    <!-- 3 BOX UTAMA -->
-    <div class="funding-status">
-        <div class="fs-box total">
-            <div class="fs-label">Total Modal Dibutuhkan</div>
-            <div class="fs-value">Rp 583.000.000</div>
-            <div class="fs-sub">Lima ratus delapan puluh tiga juta rupiah</div>
-        </div>
-        <div class="fs-box have">
-            <div class="fs-label">Dana Tersedia Saat Ini</div>
-            <div class="fs-value">~Rp 383.000.000</div>
-            <div class="fs-sub">± 65,7% dari total kebutuhan</div>
-        </div>
-        <div class="fs-box need">
-            <div class="fs-label">Estimasi Kekurangan</div>
-            <div class="fs-value">~Rp 200.000.000</div>
-            <div class="fs-sub">± 34,3% — perlu pendanaan tambahan</div>
-        </div>
-    </div>
-
-    <!-- PROGRESS BAR -->
-    <div class="progress-section">
-        <h3>📊 Progress Pendanaan <span>BossX Token</span></h3>
-        <div class="big-bar-track">
-            <div class="big-bar-fill">65,7%</div>
-            <div class="big-bar-gap">-34,3%</div>
-        </div>
-        <div class="progress-legend">
-            <span><i class="dot green"></i> Dana Tersedia (~Rp 383 Jt)</span>
-            <span><i class="dot red"></i> Kekurangan (~Rp 200 Jt)</span>
-        </div>
-    </div>
-
-    <!-- TABEL RINCIAN ANGGARAN -->
-    <div class="stitle">
-        <h2>Rincian Anggaran <em>Rp 583 Juta</em></h2>
-        <p>Breakdown penggunaan modal per pos pengeluaran beserta status pendanaan</p>
-    </div>
-
-    <div class="tbl-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Pos Pengeluaran</th>
-                    <th class="num">Anggaran (Rp)</th>
-                    <th class="num">Tersedia (Rp)</th>
-                    <th class="num">Kurang (Rp)</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td><strong>Pengembangan Teknologi</strong><br><small style="color:var(--muted)">Smart Contract, Website Web3, dApp, UI/UX</small></td>
-                    <td class="num">150.000.000</td>
-                    <td class="num">100.000.000</td>
-                    <td class="num" style="color:var(--red)">50.000.000</td>
-                    <td><span class="status-badge badge-partial">Sebagian</span></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td><strong>Legalitas & Perizinan</strong><br><small style="color:var(--muted)">PT, Legal Opinion, Kepatuhan Bappebti</small></td>
-                    <td class="num">50.000.000</td>
-                    <td class="num">50.000.000</td>
-                    <td class="num" style="color:var(--green)">0</td>
-                    <td><span class="status-badge badge-ok">Terpenuhi</span></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td><strong>Audit Keamanan</strong><br><small style="color:var(--muted)">Audit Smart Contract, Pentest Website</small></td>
-                    <td class="num">40.000.000</td>
-                    <td class="num">25.000.000</td>
-                    <td class="num" style="color:var(--red)">15.000.000</td>
-                    <td><span class="status-badge badge-partial">Sebagian</span></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td><strong>Pemasaran & Komunitas</strong><br><small style="color:var(--muted)">KOL, Social Media, Airdrop, PR</small></td>
-                    <td class="num">80.000.000</td>
-                    <td class="num">45.000.000</td>
-                    <td class="num" style="color:var(--red)">35.000.000</td>
-                    <td><span class="status-badge badge-partial">Sebagian</span></td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td><strong>Likuiditas & Listing</strong><br><small style="color:var(--muted)">DEX Liquidity Pool, CEX Listing, Market Maker</small></td>
-                    <td class="num">120.000.000</td>
-                    <td class="num">50.000.000</td>
-                    <td class="num" style="color:var(--red)">70.000.000</td>
-                    <td><span class="status-badge badge-need">Butuh Dana</span></td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td><strong>Operasional & Tim</strong><br><small style="color:var(--muted)">Gaji, Server, Tools (6 bulan)</small></td>
-                    <td class="num">93.000.000</td>
-                    <td class="num">73.000.000</td>
-                    <td class="num" style="color:var(--red)">20.000.000</td>
-                    <td><span class="status-badge badge-partial">Sebagian</span></td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td><strong>Dana Cadangan</strong><br><small style="color:var(--muted)">Buffer tak terduga, fluktuasi gas fee</small></td>
-                    <td class="num">50.000.000</td>
-                    <td class="num">40.000.000</td>
-                    <td class="num" style="color:var(--red)">10.000.000</td>
-                    <td><span class="status-badge badge-partial">Sebagian</span></td>
-                </tr>
-                <tr class="total-row">
-                    <td colspan="2"><strong>TOTAL</strong></td>
-                    <td class="num"><strong>583.000.000</strong></td>
-                    <td class="num" style="color:var(--green)"><strong>383.000.000</strong></td>
-                    <td class="num" style="color:var(--red)"><strong>200.000.000</strong></td>
-                    <td><span class="status-badge badge-need">-34,3%</span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- KEKURANGAN DANA -->
-    <div class="gap-section">
-        <h3>🔴 Detail Kekurangan Dana: ~Rp 200.000.000</h3>
-        <p>Berikut adalah pos-pos yang masih membutuhkan suntikan dana agar proyek BossX Token dapat berjalan sesuai rencana:</p>
-        <div class="gap-grid">
-            <div class="gap-card">
-                <h5>1. Likuiditas & Listing</h5>
-                <div class="gap-amt">-Rp 70 Jt</div>
-                <p>Kekurangan terbesar. Dana ini krusial untuk menyediakan Liquidity Pool di DEX agar token BOSSX bisa diperdagangkan saat launch.</p>
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-5 sm:px-6 lg:px-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Laporan Modal Kerja</h1>
+                <p class="text-sm text-gray-500">Entitas: BossX & BossXp | Periode: 30 September 2026 (Q3)</p>
             </div>
-            <div class="gap-card">
-                <h5>2. Pengembangan Teknologi</h5>
-                <div class="gap-amt">-Rp 50 Jt</div>
-                <p>Untuk menyelesaikan fitur dApp, integrasi wallet, dan testing sebelum deployment ke mainnet.</p>
+            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+                Unduh PDF
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- BossX Card -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 card-hover transition">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-500">BossX</h3>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">Rp 600 Jt</p>
+                        <p class="text-sm text-gray-500">Modal Kerja Bersih</p>
+                    </div>
+                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">Sehat</span>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+                    <div><p class="text-gray-500">Aset Lancar</p><p class="font-semibold">Rp 1.000 Jt</p></div>
+                    <div><p class="text-gray-500">Liabilitas Lancar</p><p class="font-semibold">Rp 400 Jt</p></div>
+                </div>
             </div>
-            <div class="gap-card">
-                <h5>3. Pemasaran & Komunitas</h5>
-                <div class="gap-amt">-Rp 35 Jt</div>
-                <p>Kampanye KOL, airdrop, dan building komunitas yang agresif menjelang peluncuran token.</p>
-            </div>
-            <div class="gap-card">
-                <h5>4. Operasional & Tim</h5>
-                <div class="gap-amt">-Rp 20 Jt</div>
-                <p>Menutup gaji tim inti dan biaya server untuk 2-3 bulan tambahan runway.</p>
-            </div>
-            <div class="gap-card">
-                <h5>5. Audit Keamanan</h5>
-                <div class="gap-amt">-Rp 15 Jt</div>
-                <p>Menyelesaikan audit smart contract penuh oleh firma auditor sebelum token diluncurkan.</p>
-            </div>
-            <div class="gap-card">
-                <h5>6. Dana Cadangan</h5>
-                <div class="gap-amt">-Rp 10 Jt</div>
-                <p>Buffer tambahan untuk biaya tak terduga seperti lonjakan gas fee atau revisi mendesak.</p>
+
+            <!-- BossXp Card -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500 card-hover transition">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-500">BossXp</h3>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">Rp 500 Jt</p>
+                        <p class="text-sm text-gray-500">Modal Kerja Bersih</p>
+                    </div>
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">Perhatian</span>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+                    <div><p class="text-gray-500">Aset Lancar</p><p class="font-semibold">Rp 1.100 Jt</p></div>
+                    <div><p class="text-gray-500">Liabilitas Lancar</p><p class="font-semibold">Rp 600 Jt</p></div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- RENCANA PENGGUNAAN DANA KEKURANGAN -->
-    <div class="stitle">
-        <h2>Rencana Penggunaan <em>Dana Rp 200 Juta</em></h2>
-        <p>Jika pendanaan tambahan berhasil diperoleh, dana akan dialokasikan sebagai berikut</p>
-    </div>
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <h3 class="text-lg font-semibold mb-4">Perbandingan Aset vs Liabilitas (Juta Rp)</h3>
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <h3 class="text-lg font-semibold mb-4">Komposisi Aset Lancar Gabungan</h3>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
 
-    <div class="use-grid">
-        <div class="use-card">
-            <h4>🚀 Fase 1: Bulan 1-2 (Rp 85 Jt)</h4>
-            <p>Prioritas penyelesaian produk & keamanan:</p>
-            <ul>
-                <li>Finalisasi Smart Contract & dApp (Rp 50 Jt)</li>
-                <li>Audit keamanan penuh (Rp 15 Jt)</li>
-                <li>Operasional tim developer (Rp 20 Jt)</li>
+        <!-- Detail Table -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold">Rincian Komponen Modal Kerja</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Akun</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BossX (Juta Rp)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">BossXp (Juta Rp)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total (Juta Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Aset Lancar -->
+                        <tr class="bg-blue-50">
+                            <td colspan="4" class="px-6 py-2 text-sm font-bold text-blue-800">ASET LANCAR</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 text-sm text-gray-700">Kas & Setara Kas</td>
+                            <td class="px-6 py-3 text-sm text-right">500</td>
+                            <td class="px-6 py-3 text-sm text-right">300</td>
+                            <td class="px-6 py-3 text-sm text-right font-semibold">800</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 text-sm text-gray-700">Piutang Usaha</td>
+                            <td class="px-6 py-3 text-sm text-right">300</td>
+                            <td class="px-6 py-3 text-sm text-right">450</td>
+                            <td class="px-6 py-3 text-sm text-right font-semibold">750</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 text-sm text-gray-700">Persediaan</td>
+                            <td class="px-6 py-3 text-sm text-right">200</td>
+                            <td class="px-6 py-3 text-sm text-right">350</td>
+                            <td class="px-6 py-3 text-sm text-right font-semibold">550</td>
+                        </tr>
+                        <tr class="bg-gray-50 font-semibold">
+                            <td class="px-6 py-3 text-sm text-gray-900">Total Aset Lancar</td>
+                            <td class="px-6 py-3 text-sm text-right text-blue-600">1.000</td>
+                            <td class="px-6 py-3 text-sm text-right text-purple-600">1.100</td>
+                            <td class="px-6 py-3 text-sm text-right text-gray-900">2.100</td>
+                        </tr>
+
+                        <!-- Liabilitas Lancar -->
+                        <tr class="bg-red-50">
+                            <td colspan="4" class="px-6 py-2 text-sm font-bold text-red-800">LIABILITAS LANCAR</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 text-sm text-gray-700">Utang Usaha</td>
+                            <td class="px-6 py-3 text-sm text-right">250</td>
+                            <td class="px-6 py-3 text-sm text-right">400</td>
+                            <td class="px-6 py-3 text-sm text-right font-semibold">650</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 text-sm text-gray-700">Beban Masih Harus Dibayar</td>
+                            <td class="px-6 py-3 text-sm text-right">150</td>
+                            <td class="px-6 py-3 text-sm text-right">200</td>
+                            <td class="px-6 py-3 text-sm text-right font-semibold">350</td>
+                        </tr>
+                        <tr class="bg-gray-50 font-semibold">
+                            <td class="px-6 py-3 text-sm text-gray-900">Total Liabilitas Lancar</td>
+                            <td class="px-6 py-3 text-sm text-right text-blue-600">400</td>
+                            <td class="px-6 py-3 text-sm text-right text-purple-600">600</td>
+                            <td class="px-6 py-3 text-sm text-right text-gray-900">1.000</td>
+                        </tr>
+
+                        <!-- Modal Kerja Bersih -->
+                        <tr class="bg-indigo-100 font-bold text-indigo-900">
+                            <td class="px-6 py-4 text-base">MODAL KERJA BERSIH</td>
+                            <td class="px-6 py-4 text-base text-right">600</td>
+                            <td class="px-6 py-4 text-base text-right">500</td>
+                            <td class="px-6 py-4 text-base text-right">1.100</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Analisis / Catatan -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-400">
+            <h3 class="text-lg font-semibold mb-3 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM4 11a1 1 0 100-2H3a1 1 0 000 2h1zM10 18a1 1 0 001-1v-1a1 1 0 10-2 0v1a1 1 0 001 1zM12 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                Catatan Analisis Manajemen
+            </h3>
+            <ul class="list-disc list-inside text-sm text-gray-600 space-y-2">
+                <li><strong>BossX:</strong> Memiliki rasio lancar yang sangat baik (2.5). Posisi kas kuat, namun perlu mengoptimalkan perputaran persediaan yang mulai menumpuk.</li>
+                <li><strong>BossXp:</strong> Modal kerja bersih positif, namun rasio lancar lebih tipis (1.83). Piutang usaha BossXp cukup tinggi (450 Jt), disarankan untuk memperketat kebijakan kredit pelanggan agar arus kas masuk lebih cepat.</li>
+                <li><strong>Rekomendasi:</strong> Alokasikan surplus kas BossX untuk menalangi kebutuhan operasional jangka pendek BossXp jika diperlukan, atau gunakan untuk investasi aset tetap.</li>
             </ul>
         </div>
-        <div class="use-card">
-            <h4>📢 Fase 2: Bulan 3-4 (Rp 55 Jt)</h4>
-            <p>Marketing agresif menjelang launch:</p>
-            <ul>
-                <li>Kampanye KOL & influencer (Rp 25 Jt)</li>
-                <li>Airdrop & community building (Rp 10 Jt)</li>
-                <li>Operasional & server (Rp 10 Jt)</li>
-                <li>Dana cadangan (Rp 10 Jt)</li>
-            </ul>
-        </div>
-        <div class="use-card">
-            <h4>💎 Fase 3: Bulan 5-6 (Rp 60 Jt)</h4>
-            <p>Peluncuran token & listing:</p>
-            <ul>
-                <li>Liquidity Pool DEX (Rp 50 Jt)</li>
-                <li>Biaya listing CEX kecil (Rp 10 Jt)</li>
-            </ul>
-        </div>
-    </div>
 
-    <!-- CATATAN PENTING -->
-    <div class="notes">
-        <h3>📝 Catatan Penting</h3>
-        <ol>
-            <li><strong>Angka bersifat estimasi</strong> — angka Rp 383 juta (dana tersedia) dan Rp 200 juta (kekurangan) dapat berubah sesuai kondisi aktual kas dan komitmen investor yang sudah masuk.</li>
-            <li><strong>Dana likuiditas tidak hangus</strong> — Rp 120 juta untuk likuiditas akan dikunci dalam Liquidity Pool dan tetap menjadi aset proyek, bukan biaya yang hilang.</li>
-            <li><strong>Prioritas utama</strong> — jika dana Rp 200 juta tidak bisa dipenuhi sekaligus, prioritas pertama adalah Teknologi + Audit (Rp 65 Jt) agar produk bisa launch minimal di DEX.</li>
-            <li><strong>Opsi pendanaan</strong> — kekurangan bisa ditutup melalui: investor angel, private sale token BOSSX, grant blockchain, atau bootstrapping bertahap.</li>
-            <li><strong>Transparansi</strong> — seluruh penggunaan dana akan dicatat on-chain dan dilaporkan berkala kepada investor/kontributor.</li>
-        </ol>
-    </div>
+    </main>
 
-</div>
+    <script>
+        // Data Dummy
+        const dataBossX = { aset: 1000, liabilitas: 400 };
+        const dataBossXp = { aset: 1100, liabilitas: 600 };
 
-<!-- FOOTER -->
-<footer>
-    <div class="wrap">
-        <div class="sig-row">
-            <div class="sig">
-                <div class="sig-line"></div>
-                <h5>Founder / CEO</h5>
-                <p>BossX Token</p>
-            </div>
-            <div class="sig">
-                <div class="sig-line"></div>
-                <h5>Finance / Bendahara</h5>
-                <p>BossX Token</p>
-            </div>
-            <div class="sig">
-                <div class="sig-line"></div>
-                <h5>Tanggal</h5>
-                <p>22 September 2026</p>
-            </div>
-        </div>
-        <div class="foot-bottom">
-            © 2026 <b>BOSSX TOKEN</b> — Dokumen Internal & Rahasia. Total Kebutuhan: Rp 583.000.000 | Kekurangan: ~Rp 200.000.000
-        </div>
-    </div>
-</footer>
+        // Bar Chart
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['BossX', 'BossXp'],
+                datasets: [
+                    { label: 'Aset Lancar', data: [dataBossX.aset, dataBossXp.aset], backgroundColor: 'rgba(54, 162, 235, 0.7)' },
+                    { label: 'Liabilitas Lancar', data: [dataBossX.liabilitas, dataBossXp.liabilitas], backgroundColor: 'rgba(255, 99, 132, 0.7)' }
+                ]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: true } } }
+        });
 
+        // Pie Chart
+        const ctxPie = document.getElementById('pieChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'doughnut',
+            data: {
+                labels: ['Kas (Gabungan)', 'Piutang (Gabungan)', 'Persediaan (Gabungan)'],
+                datasets: [{
+                    data: [800, 750, 550],
+                    backgroundColor: ['#10B981', '#F59E0B', '#3B82F6']
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+    </script>
 </body>
 </html>
